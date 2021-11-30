@@ -20,6 +20,8 @@ df = pd.read_csv(
     dtype={"Stadtkreis": str},
 )
 
+dogs_per_quart = df.groupby("qnr")["HALTER_ID"].count()
+
 #import stadtquartiere ZH json
 url = "https://www.ogd.stadt-zuerich.ch/wfs/geoportal/Statistische_Quartiere?service=WFS&version=1.1.0&request=GetFeature&outputFormat=GeoJSON&typename=adm_statistische_quartiere_map"
 zh_quar_json = requests.get(url).json()
@@ -42,14 +44,16 @@ df.astype({"STADTQUARTIER": float}, copy=True, errors="raise")
 df["qnr"] = df["STADTQUARTIER"]
 del df["STADTQUARTIER"]
 
+dogs_per_quart = df.groupby("qnr")["HALTER_ID"].count()
+dogs_per_quart = pd.DataFrame(dogs_per_quart).reset_index()
 
 # choropleth_mapbox of total dogs per stadtquartier
 fig1 = px.choropleth_mapbox(
-    df,
+    dogs_per_quart,
     geojson=zh_quar_json,
     locations="qnr",
     color="HALTER_ID",
-    range_color=(151150, 152450),
+    range_color=(0, 650),
     # add path as a string
     featureidkey="properties.qnr",
     mapbox_style="carto-positron",
