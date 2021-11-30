@@ -20,8 +20,6 @@ df = pd.read_csv(
     dtype={"Stadtkreis": str},
 )
 
-dogs_per_quart = df.groupby("qnr")["HALTER_ID"].count()
-
 #import stadtquartiere ZH json
 url = "https://www.ogd.stadt-zuerich.ch/wfs/geoportal/Statistische_Quartiere?service=WFS&version=1.1.0&request=GetFeature&outputFormat=GeoJSON&typename=adm_statistische_quartiere_map"
 zh_quar_json = requests.get(url).json()
@@ -40,7 +38,7 @@ df.astype({"STADTQUARTIER": float}, copy=True, errors="raise")
 #df["Kreis"] = df["STADTKREIS"]
 #del df["STADTKREIS"]
 
-# rename and drop old column to connect hson and df files
+# rename and drop old column to connect json and df files
 df["qnr"] = df["STADTQUARTIER"]
 del df["STADTQUARTIER"]
 
