@@ -16,7 +16,7 @@ import requests
 #import 
 # import dataframe for dogs
 df = pd.read_csv(
-    "/Users/marliesmonch/Desktop/propulsion/marlies-monch/02_Visualization/day3-4/data/20200306_hundehalter.csv",
+    "./data/raw/20200306_hundehalter.csv",
     dtype={"Stadtkreis": str},
 )
 
@@ -26,10 +26,10 @@ zh_quar_json = requests.get(url).json()
 
 # Data Cleaning
 # drop empty column
-df.drop("RASSE2_MISCHLING", axis=1)
+df.drop("RASSE2_MISCHLING", axis=1,inplace=True)
 
 # drop duplicates (not necessary for this df)
-# df.drop_duplicates(subset=None, keep="first", inplace=True, ignore_index=False)
+df.drop_duplicates(subset=None, keep="first", inplace=True, ignore_index=False)
 
 # force float datatype to connect json and df files
 df.astype({"STADTQUARTIER": float}, copy=True, errors="raise")
@@ -41,7 +41,7 @@ df.astype({"STADTQUARTIER": float}, copy=True, errors="raise")
 # rename and drop old column to connect hson and df files
 df["qnr"] = df["STADTQUARTIER"]
 del df["STADTQUARTIER"]
-df
+
 
 # choropleth_mapbox of total dogs per stadtquartier
 fig1 = px.choropleth_mapbox(
@@ -79,16 +79,18 @@ fig1.update_geos(
 
 
 
-st.title("introduction to Streamlit")
-st.header("MPG Data Exploration")
+st.title("Dog Demographics of Zürich")
+st.header("Data Exploration")
 
-st.table(data=mpg_df.head())
+if st.sidebar.checkbox("Show Dataframe"):
+    st.subheader("Dataset used for Analysis")
+    st.table(data=df.head())
 
 #streamlit mas
-st.subheader("Streamlit Map")
-ds_geo = px.data.carshare()
+st.subheader("Plotly Map")
+#ds_geo = px.data.carshare()
 
-ds_geo["lat"]=ds_geo["centroid_lat"]
-ds_geo["lon"]=ds_geo["centroid_lon"]
-
-st.map(ds_geo)
+#ds_geo["lat"]=ds_geo["centroid_lat"]
+#ds_geo["lon"]=ds_geo["centroid_lon"]
+#with 
+st.plotly_chart(fig1)
